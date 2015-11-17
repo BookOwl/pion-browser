@@ -2,6 +2,7 @@
 <html>
   <head>
     <link rel="stylesheet" href="browser.css">
+    <link rel="stylesheet" href="../customize/userstyle.css">
     <script src="browser.js"></script>
   <body>
     <div id="controls">
@@ -13,13 +14,13 @@
 
       <form id="location-form">
         <div id="center-column">
-          <input id="location" type="text" value="home.html">
+          <input id="location" type="text" value="home.html" onclick="this.focus();this.select()">
         </div>
         <input type="submit" value="Go">
       </form>
     </div>
 
-    <webview src="home.html" allowpopups disablewebsecurity preload='prompt.js'></webview>
+    <webview src="../home/home.html" allowpopups disablewebsecurity preload='prompt.js'></webview>
 
     <div id="sad-webview">
       <div id="sad-webview-icon">&#9762;</div>

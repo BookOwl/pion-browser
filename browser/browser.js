@@ -16,7 +16,7 @@ onload = function() {
   };
 
   document.querySelector('#home').onclick = function() {
-    navigateTo('file:home.html');
+    navigateTo('file:../home/home.html');
   };
 
   document.querySelector('#reload').onclick = function() {
@@ -45,13 +45,19 @@ onload = function() {
   webview.addEventListener('did-fail-load', handleLoadAbort);
   webview.addEventListener('did-get-redirect-request', handleLoadRedirect);
   webview.addEventListener('did-finish-load', handleLoadCommit);
+  webview.addEventListener('new-window', function(e) {
+    webview.src = e.url;
+  });
+  webview.addEventListener('close', function() {
+    webview.src = 'about:blank';
+  });
   
   createMenus();
 };
 
 function navigateTo(url) {
   resetExitedState();
-  var r = /http:|https:|file:/;
+  var r = /^.+?:/;
   if (r.test(url)){
     document.querySelector('webview').src = url;
   } else {
@@ -101,6 +107,7 @@ function handleLoadCommit() {
   document.querySelector('#location').value = webview.getUrl();
   document.querySelector('#back').disabled = !webview.canGoBack();
   document.querySelector('#forward').disabled = !webview.canGoForward();
+  remote.getCurrentWindow().setTitle('Pion: ' + webview.getTitle());
 }
 
 function handleLoadStart(event) {
@@ -253,6 +260,10 @@ function createMenus(){
               webview.openDevTools();
             }
           }
+        },
+        {
+          label: 'Toggle Pion Dev Tools',
+          click: function() { remote.getCurrentWindow().toggleDevTools(); }
         },
     ]
   },
