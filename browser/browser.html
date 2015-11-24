@@ -20,7 +20,7 @@
       </form>
     </div>
 
-    <webview src="../home/home.html" allowpopups disablewebsecurity preload='prompt.js'></webview>
+    <webview src="../home/home.html" allowpopups disablewebsecurity preload='inject.js' plugins></webview>
 
     <div id="sad-webview">
       <div id="sad-webview-icon">&#9762;</div>
@@ -30,5 +30,32 @@
       <p>Something went wrong while displaying this webpage.
       To continue, reload or go to another page.</p>
     </div>
+    
+    <dialog id="htmldialog">
+      <h1>Load HTML</h1>
+      <p>Enter your HTML into the text area, and click load</p>
+      <textarea id="htmlinput"></textarea>
+      <button id="loadhtml">Load</button>
+    </dialog>
+    
+    <dialog id="cssdialog">
+      <h1>Load CSS</h1>
+      <p>Enter your CSS into the text area, and click load</p>
+      <textarea id="cssinput"></textarea>
+      <button id="loadcss">Load</button>
+    </dialog>
+    
+    <dialog id="jsdialog">
+      <h1>Run JS</h1>
+      <p>Enter your Javascript into the text area, and click run</p>
+      <textarea id="jsinput"></textarea>
+      <button id="runjs">Run</button>
+    </dialog>
+    
+    <dialog id="outlinedialog">
+      <h1>Document Outline:</h1>
+      <div id="outline"></div>
+      <button id="outlineclose">Close</button>
+    </dialog>
   </body>
 </html>

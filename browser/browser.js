@@ -2,6 +2,7 @@ var remote = require('remote');
 window.onresize = doLayout;
 var isLoading = false;
 var webview;
+var woutline = "";
 
 onload = function() {
   webview = document.querySelector('webview');
@@ -50,6 +51,10 @@ onload = function() {
   });
   webview.addEventListener('close', function() {
     webview.src = 'about:blank';
+  });
+  webview.addEventListener("ipc-message", function(e){
+    console.log(e.args[0].outline);
+    woutline = e.args[0].outline;
   });
   
   createMenus();
@@ -170,6 +175,8 @@ function createMenus(){
     cmenu.popup(remote.getCurrentWindow());
   }, false);
   
+  var ql = loadQuicklinks();
+  
   var template = [
   {
     label: 'Edit',
@@ -245,52 +252,47 @@ function createMenus(){
   {
     label: 'Dev Tools',
     submenu: [
-        {
-          label: 'Toggle Developer Tools',
-          accelerator: (function() {
-            if (process.platform == 'darwin')
-              return 'Alt+Command+I';
-            else
-              return 'Ctrl+Shift+I';
-          })(),
-          click: function() {
-            if (webview.isDevToolsOpened()){
-              webview.closeDevTools();
-            } else {
-              webview.openDevTools();
-            }
+      {
+        label: 'Toggle Developer Tools',
+        accelerator: (function() {
+          if (process.platform == 'darwin')
+            return 'Alt+Command+I';
+          else
+            return 'Ctrl+Shift+I';
+        })(),
+        click: function() {
+          if (webview.isDevToolsOpened()){
+            webview.closeDevTools();
+          } else {
+            webview.openDevTools();
           }
-        },
-        {
-          label: 'Toggle Pion Dev Tools',
-          click: function() { remote.getCurrentWindow().toggleDevTools(); }
-        },
+        }
+      },
+      {
+        label: 'Toggle Pion Dev Tools',
+        click: function() { remote.getCurrentWindow().toggleDevTools(); }
+      },
+      {
+        label: 'Show document outline',
+        click: function() { showOutline(); }
+      },
+      {
+        label: 'Load HTML',
+        click: function() { loadHTML(); }
+      },
+      {
+        label: 'Inject CSS',
+        click: function() { loadCSS(); }
+      },
+      {
+        label: 'Run JS in the current webpage',
+        click: function() { runJS(); }
+      }
     ]
   },
   {
     label: 'Quick Links',
-    submenu: [
-      {
-        label: 'Scratch',
-        accelerator: 'CmdOrCtrl+Alt+S',
-        click: function() { navigateTo('https://scratch.mit.edu'); }
-      },
-      {
-        label: 'Github',
-        accelerator: 'CmdOrCtrl+Alt+G',
-        click: function() { navigateTo('https://github.com'); }
-      },
-      {
-        label: 'MDN',
-        accelerator: 'CmdOrCtrl+Alt+M',
-        click: function() { navigateTo('https://developer.mozilla.org/en-US/'); }
-      },
-      {
-        label: 'Wikipedia',
-        accelerator: 'CmdOrCtrl+Alt+W',
-        click: function() { navigateTo('http://en.wikipedia.org/wiki/Main_Page'); }
-      },
-    ]
+    submenu: ql
   }
 ];
   if (process.platform == 'darwin') {
@@ -350,4 +352,71 @@ function createMenus(){
 }
   menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
+}
+
+function loadQuicklinks(){
+  var fs = require("fs");
+  var fpath = require("path").join(__dirname, "../customize/quicklinks.json");
+  var f = fs.readFileSync(fpath, "utf-8");
+  var ql = JSON.parse(f);
+  for(var i = 0; i < ql.length; i++){
+    var u = ql[i].url;
+    ql[i].click = new Function("navigateTo('" + u + "');");
+    delete ql[i].url;
+  }
+  return ql;
+}
+
+function loadHTML(){
+  var dialog = document.getElementById("htmldialog");
+  var loadbutton = document.getElementById("loadhtml");
+  var textarea = document.getElementById("htmlinput");
+  textarea.value = "";
+  
+  loadbutton.addEventListener("click", function(){
+    dialog.close()
+    if (textarea.value){
+      navigateTo('data:text/html;charset=utf-8,' + encodeURIComponent(textarea.value));
+    }
+  });
+  dialog.showModal();
+}
+
+function loadCSS(){
+  var dialog = document.getElementById("cssdialog");
+  var loadbutton = document.getElementById("loadcss");
+  var textarea = document.getElementById("cssinput");
+  textarea.value = "";
+  
+  loadbutton.addEventListener("click", function(){
+    dialog.close()
+    if (textarea.value){
+      webview.insertCSS(textarea.value);
+    }
+  });
+  dialog.showModal();
+}
+
+function runJS(){
+  var dialog = document.getElementById("jsdialog");
+  var runbutton = document.getElementById("runjs");
+  var textarea = document.getElementById("jsinput");
+  textarea.value = "";
+  
+  runbutton.addEventListener("click", function(){
+    dialog.close()
+    if (textarea.value){
+      webview.executeJavaScript(textarea.value);
+    }
+  });
+  dialog.showModal();
+}
+
+function showOutline(){
+  var outlinediv = document.getElementById("outline");
+  outlinediv.innerHTML = woutline;
+  var outlineclose = document.getElementById("outlineclose");
+  var outlinedialog = document.getElementById("outlinedialog");
+  outlineclose.addEventListener("click", function(){ outlinedialog.close(); } );
+  outlinedialog.showModal();
 }

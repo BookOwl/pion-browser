@@ -1,0 +1,22 @@
+[
+  {
+    "label": "Scratch",
+    "accelerator": "CmdOrCtrl+Alt+S",
+    "url": "https://scratch.mit.edu"
+  },
+  {
+    "label": "Github",
+    "accelerator": "CmdOrCtrl+Alt+G",
+    "url": "https://github.com"
+  },
+  {
+    "label": "MDN",
+    "accelerator": "CmdOrCtrl+Alt+M",
+    "url": "https://developer.mozilla.org/en-US/"
+  },
+  {
+    "label": "Wikipedia",
+    "accelerator": "CmdOrCtrl+Alt+W",
+    "url": "http://en.wikipedia.org/wiki/Main_Page"
+  }
+]
