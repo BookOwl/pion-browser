@@ -17,6 +17,7 @@ app.on('ready', function() {
   fs.readFile(__dirname + '/save/window_size.json', function(err, size) {
     size = JSON.parse(size);
     mainWindow = new BrowserWindow({width: size.width, height: size.height});
+    mainWindow.setContentSize(size.width, size.height);
     mainWindow.loadUrl('file://' + __dirname + '/browser/browser.html');
   });
   //mainWindow.openDevTools();
