@@ -15,11 +15,8 @@ app.on('window-all-closed', function() {
 app.on('ready', function() {
   fs.readFile(__dirname + '/save/window_size.json', function(err, size) {
     size = JSON.parse(size);
-    console.log(size);
     mainWindow = new BrowserWindow({width: size.width, height: size.height});
     mainWindow.setContentSize(size.width, size.height);
-    console.log('file://' + __dirname + '/browser/browser.html');
     mainWindow.loadURL('file://' + __dirname + '/browser/browser.html');
   });
-  //mainWindow.openDevTools();
 });

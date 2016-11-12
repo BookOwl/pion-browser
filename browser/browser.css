@@ -1,9 +1,7 @@
-@import url(https://fonts.googleapis.com/css?family=Oxygen:300);
-
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Oxygen', Lucida Grande, Arial, sans-serif;
+  font-family: 'Oxygen', 'Lucida Grande', 'Arial', sans-serif;
 }
 
 button,
@@ -83,8 +81,7 @@ compared to the back/forward buttons */
 }
 
 
-#sad-webview,
-webview {
+#sad-webview {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -104,8 +101,7 @@ webview {
 /* Due to http://crbug.com/156219 we can't use display: none */
 #sad-webview,
 .exited webview {
-  visibility: hidden;
-  visibility: hidden;
+  display: none;
 }
 
 .exited #sad-webview {
@@ -144,4 +140,9 @@ case we use a different background color and label). */
 
 .killed #sad-webview #crashed-label {
   display: none;
+}
+
+webview {
+    width: 100%;
+    height: 100%;
 }

@@ -43,4 +43,5 @@ Temporary Items
 .apdisk
 
 # Save files
-save
+save/*
+

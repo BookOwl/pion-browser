@@ -1,10 +1,10 @@
-var remote = require('remote');
+const {remote} = require('electron');
 window.onresize = doLayout;
 var isLoading = false;
 var webview;
 var woutline = "";
 
-onload = function() {
+window.onload = function() {
   webview = document.querySelector('webview');
   doLayout();
 
@@ -109,7 +109,7 @@ function handleKeyDown(event) {}
 function handleLoadCommit() {
   resetExitedState();
   var webview = document.querySelector('webview');
-  document.querySelector('#location').value = webview.getUrl();
+  document.querySelector('#location').value = webview.getURL();
   document.querySelector('#back').disabled = !webview.canGoBack();
   document.querySelector('#forward').disabled = !webview.canGoForward();
   remote.getCurrentWindow().setTitle('Pion: ' + webview.getTitle());
@@ -146,9 +146,9 @@ function handleLoadRedirect(event) {
 }
 
 function createMenus(){
-  var Menu = remote.require('menu');
-  var MenuItem = remote.require('menu-item');
-  
+  console.log("Creating menus...")
+  const {Menu, MenuItem} = remote.require('electron');
+  console.log("Finished requires")
   var cmenu = new Menu();
   cmenu.append(new MenuItem({ 
                                 label: 'Copy',
@@ -296,7 +296,8 @@ function createMenus(){
   }
 ];
   if (process.platform == 'darwin') {
-  var name = require('app').getName();
+  const {app} = remote.require('electron');
+  var name = app.getName()
   template.unshift({
     label: name,
     submenu: [
