@@ -31,7 +31,7 @@ window.onload = function() {
     'webkitAnimationIteration',
     function() {
       if (!isLoading) {
-        document.body.classList.remove('loading');
+        document.getElementById("reload-icon").classList.remove('fa-spin');
       }
     });
 
@@ -115,7 +115,7 @@ function handleLoadCommit() {
 }
 
 function handleLoadStart(event) {
-  document.body.classList.add('loading');
+  document.getElementById("reload-icon").classList.add('fa-spin');
   isLoading = true;
 
   resetExitedState();

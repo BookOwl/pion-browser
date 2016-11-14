@@ -21,7 +21,7 @@ app.on('window-all-closed', function() {
 
 app.on('ready', function() {
   fs.readFile(__dirname + '/save/window_size.json', function(err, cont) {
-    const size = JSON.parse(cont);
+    const size = err ? {width:800, height: 600} : JSON.parse(cont);
     mainWindow = new BrowserWindow({width: size.width, height: size.height});
     mainWindow.setContentSize(size.width, size.height);
     mainWindow.loadURL('file://' + __dirname + '/browser/browser.html');
