@@ -1,8 +1,8 @@
 const {remote} = require('electron');
 window.onresize = doLayout;
-var isLoading = false;
-var webview;
-var woutline = "";
+let isLoading = false;
+let webview;
+let woutline = "";
 
 window.onload = function() {
   webview = document.querySelector('webview');
@@ -62,8 +62,7 @@ window.onload = function() {
 
 function navigateTo(url) {
   resetExitedState();
-  var r = /^.+?:/;
-  if (r.test(url)){
+  if (/^.+?:/.test(url)){
     document.querySelector('webview').src = url;
   } else {
     document.querySelector('webview').src = "https://duckduckgo.com/?q=" + encodeURIComponent(url);
@@ -71,18 +70,18 @@ function navigateTo(url) {
 }
 
 function doLayout() {
-  var webview = document.querySelector('webview');
-  var controls = document.querySelector('#controls');
-  var controlsHeight = controls.offsetHeight;
-  var windowWidth = document.documentElement.clientWidth;
-  var windowHeight = document.documentElement.clientHeight;
-  var webviewWidth = windowWidth;
-  var webviewHeight = windowHeight - controlsHeight;
+  const webview = document.querySelector('webview');
+  const controls = document.querySelector('#controls');
+  const controlsHeight = controls.offsetHeight;
+  const windowWidth = document.documentElement.clientWidth;
+  const windowHeight = document.documentElement.clientHeight;
+  const webviewWidth = windowWidth;
+  const webviewHeight = windowHeight - controlsHeight;
 
   webview.style.width = webviewWidth + 'px';
   webview.style.height = webviewHeight + 'px';
 
-  var sadWebview = document.querySelector('#sad-webview');
+  const sadWebview = document.querySelector('#sad-webview');
   sadWebview.style.width = webviewWidth + 'px';
   sadWebview.style.height = webviewHeight * 2/3 + 'px';
   sadWebview.style.paddingTop = webviewHeight/3 + 'px';
@@ -108,7 +107,7 @@ function handleKeyDown(event) {}
 
 function handleLoadCommit() {
   resetExitedState();
-  var webview = document.querySelector('webview');
+  const webview = document.querySelector('webview');
   document.querySelector('#location').value = webview.getURL();
   document.querySelector('#back').disabled = !webview.canGoBack();
   document.querySelector('#forward').disabled = !webview.canGoForward();
@@ -149,7 +148,7 @@ function createMenus(){
   console.log("Creating menus...")
   const {Menu, MenuItem} = remote.require('electron');
   console.log("Finished requires")
-  var cmenu = new Menu();
+  const cmenu = new Menu();
   cmenu.append(new MenuItem({ 
                                 label: 'Copy',
                                 role: 'copy',
@@ -175,193 +174,193 @@ function createMenus(){
     cmenu.popup(remote.getCurrentWindow());
   }, false);
   
-  var ql = loadQuicklinks();
+  const ql = loadQuicklinks();
   
-  var template = [
-  {
-    label: 'Edit',
-    submenu: [
-      {
-        label: 'Undo',
-        accelerator: 'CmdOrCtrl+Z',
-        role: 'undo'
-      },
-      {
-        label: 'Redo',
-        accelerator: 'Shift+CmdOrCtrl+Z',
-        role: 'redo'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Cut',
-        accelerator: 'CmdOrCtrl+X',
-        role: 'cut'
-      },
-      {
-        label: 'Copy',
-        accelerator: 'CmdOrCtrl+C',
-        role: 'copy'
-      },
-      {
-        label: 'Paste',
-        accelerator: 'CmdOrCtrl+V',
-        role: 'paste'
-      },
-      {
-        label: 'Select All',
-        accelerator: 'CmdOrCtrl+A',
-        role: 'selectall'
-      },
-    ]
-  },
-  {
-    label: 'View',
-    submenu: [
-      {
-        label: 'Reload',
-        accelerator: 'CmdOrCtrl+R',
-        click: function() { webview.reload(); }
-      },
-      {
-        label: 'Toggle Full Screen',
-        accelerator: (function() {
-          if (process.platform == 'darwin')
-            return 'Ctrl+Command+F';
-          else
-            return 'F11';
-        })(),
-        click: function(item, focusedWindow) {
-          if (focusedWindow)
-            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-        }
-      },
-      {
-        label: 'Minimize',
-        accelerator: 'CmdOrCtrl+M',
-        role: 'minimize'
-      },
-      {
-        label: 'Close',
-        accelerator: 'CmdOrCtrl+W',
-        role: 'close'
-      },
-    ]
-  },
-  {
-    label: 'Dev Tools',
-    submenu: [
-      {
-        label: 'Toggle Developer Tools',
-        accelerator: (function() {
-          if (process.platform == 'darwin')
-            return 'Alt+Command+I';
-          else
-            return 'Ctrl+Shift+I';
-        })(),
-        click: function() {
-          if (webview.isDevToolsOpened()){
-            webview.closeDevTools();
-          } else {
-            webview.openDevTools();
-          }
-        }
-      },
-      {
-        label: 'Toggle Pion Dev Tools',
-        click: function() { remote.getCurrentWindow().toggleDevTools(); }
-      },
-      {
-        label: 'Show document outline',
-        click: function() { showOutline(); }
-      },
-      {
-        label: 'Load HTML',
-        click: function() { loadHTML(); }
-      },
-      {
-        label: 'Inject CSS',
-        click: function() { loadCSS(); }
-      },
-      {
-        label: 'Run JS in the current webpage',
-        click: function() { runJS(); }
-      }
-    ]
-  },
-  {
-    label: 'Quick Links',
-    submenu: ql
-  }
-];
-  if (process.platform == 'darwin') {
-  const {app} = remote.require('electron');
-  var name = app.getName()
-  template.unshift({
-    label: name,
-    submenu: [
-      {
-        label: 'About ' + name,
-        role: 'about'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Services',
-        role: 'services',
-        submenu: []
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Hide ' + name,
-        accelerator: 'Command+H',
-        role: 'hide'
-      },
-      {
-        label: 'Hide Others',
-        accelerator: 'Command+Shift+H',
-        role: 'hideothers'
-      },
-      {
-        label: 'Show All',
-        role: 'unhide'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Quit',
-        accelerator: 'Command+Q',
-        click: function() { app.quit(); }
-      },
-    ]
-  });
-  // Window menu.
-  template[3].submenu.push(
+  const template = [
     {
-      type: 'separator'
+      label: 'Edit',
+      submenu: [
+        {
+          label: 'Undo',
+          accelerator: 'CmdOrCtrl+Z',
+          role: 'undo'
+        },
+        {
+          label: 'Redo',
+          accelerator: 'Shift+CmdOrCtrl+Z',
+          role: 'redo'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Cut',
+          accelerator: 'CmdOrCtrl+X',
+          role: 'cut'
+        },
+        {
+          label: 'Copy',
+          accelerator: 'CmdOrCtrl+C',
+          role: 'copy'
+        },
+        {
+          label: 'Paste',
+          accelerator: 'CmdOrCtrl+V',
+          role: 'paste'
+        },
+        {
+          label: 'Select All',
+          accelerator: 'CmdOrCtrl+A',
+          role: 'selectall'
+        },
+      ]
     },
     {
-      label: 'Bring All to Front',
-      role: 'front'
+      label: 'View',
+      submenu: [
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click: function() { webview.reload(); }
+        },
+        {
+          label: 'Toggle Full Screen',
+          accelerator: (function() {
+            if (process.platform == 'darwin')
+              return 'Ctrl+Command+F';
+            else
+              return 'F11';
+          })(),
+          click: function(item, focusedWindow) {
+            if (focusedWindow)
+              focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+          }
+        },
+        {
+          label: 'Minimize',
+          accelerator: 'CmdOrCtrl+M',
+          role: 'minimize'
+        },
+        {
+          label: 'Close',
+          accelerator: 'CmdOrCtrl+W',
+          role: 'close'
+        },
+      ]
+    },
+    {
+      label: 'Dev Tools',
+      submenu: [
+        {
+          label: 'Toggle Developer Tools',
+          accelerator: (function() {
+            if (process.platform == 'darwin')
+              return 'Alt+Command+I';
+            else
+              return 'Ctrl+Shift+I';
+          })(),
+          click: function() {
+            if (webview.isDevToolsOpened()){
+              webview.closeDevTools();
+            } else {
+              webview.openDevTools();
+            }
+          }
+        },
+        {
+          label: 'Toggle Pion Dev Tools',
+          click: function() { remote.getCurrentWindow().toggleDevTools(); }
+        },
+        {
+          label: 'Show document outline',
+          click: function() { showOutline(); }
+        },
+        {
+          label: 'Load HTML',
+          click: function() { loadHTML(); }
+        },
+        {
+          label: 'Inject CSS',
+          click: function() { loadCSS(); }
+        },
+        {
+          label: 'Run JS in the current webpage',
+          click: function() { runJS(); }
+        }
+      ]
+    },
+    {
+      label: 'Quick Links',
+      submenu: ql
     }
-  );
-}
-  menu = Menu.buildFromTemplate(template);
+  ];
+  if (process.platform == 'darwin') {
+    const {app} = remote.require('electron');
+    const name = app.getName()
+    template.unshift({
+      label: name,
+      submenu: [
+        {
+          label: 'About ' + name,
+          role: 'about'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Services',
+          role: 'services',
+          submenu: []
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Hide ' + name,
+          accelerator: 'Command+H',
+          role: 'hide'
+        },
+        {
+          label: 'Hide Others',
+          accelerator: 'Command+Shift+H',
+          role: 'hideothers'
+        },
+        {
+          label: 'Show All',
+          role: 'unhide'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Quit',
+          accelerator: 'Command+Q',
+          click: function() { app.quit(); }
+        },
+      ]
+    });
+    // Window menu.
+    template[3].submenu.push(
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Bring All to Front',
+        role: 'front'
+      }
+    );
+  }
+  const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
 
 function loadQuicklinks(){
-  var fs = require("fs");
-  var fpath = require("path").join(__dirname, "../customize/quicklinks.json");
-  var f = fs.readFileSync(fpath, "utf-8");
-  var ql = JSON.parse(f);
-  for(var i = 0; i < ql.length; i++){
-    var u = ql[i].url;
+  const fs = require("fs");
+  const fpath = require("path").join(__dirname, "../customize/quicklinks.json");
+  const f = fs.readFileSync(fpath, "utf-8");
+  const ql = JSON.parse(f);
+  for (let i = 0; i < ql.length; i++){
+    const u = ql[i].url;
     ql[i].click = new Function("navigateTo('" + u + "');");
     delete ql[i].url;
   }
@@ -369,9 +368,9 @@ function loadQuicklinks(){
 }
 
 function loadHTML(){
-  var dialog = document.getElementById("htmldialog");
-  var loadbutton = document.getElementById("loadhtml");
-  var textarea = document.getElementById("htmlinput");
+  const dialog = document.getElementById("htmldialog");
+  const loadbutton = document.getElementById("loadhtml");
+  const textarea = document.getElementById("htmlinput");
   textarea.value = "";
   
   loadbutton.addEventListener("click", function(){
@@ -384,9 +383,9 @@ function loadHTML(){
 }
 
 function loadCSS(){
-  var dialog = document.getElementById("cssdialog");
-  var loadbutton = document.getElementById("loadcss");
-  var textarea = document.getElementById("cssinput");
+  const dialog = document.getElementById("cssdialog");
+  const loadbutton = document.getElementById("loadcss");
+  const textarea = document.getElementById("cssinput");
   textarea.value = "";
   
   loadbutton.addEventListener("click", function(){
@@ -399,9 +398,9 @@ function loadCSS(){
 }
 
 function runJS(){
-  var dialog = document.getElementById("jsdialog");
-  var runbutton = document.getElementById("runjs");
-  var textarea = document.getElementById("jsinput");
+  const dialog = document.getElementById("jsdialog");
+  const runbutton = document.getElementById("runjs");
+  const textarea = document.getElementById("jsinput");
   textarea.value = "";
   
   runbutton.addEventListener("click", function(){
@@ -414,10 +413,10 @@ function runJS(){
 }
 
 function showOutline(){
-  var outlinediv = document.getElementById("outline");
+  const outlinediv = document.getElementById("outline");
   outlinediv.innerHTML = woutline;
-  var outlineclose = document.getElementById("outlineclose");
-  var outlinedialog = document.getElementById("outlinedialog");
-  outlineclose.addEventListener("click", function(){ outlinedialog.close(); } );
+  const outlineclose = document.getElementById("outlineclose");
+  const outlinedialog = document.getElementById("outlinedialog");
+  outlineclose.addEventListener("click", () => { outlinedialog.close() });
   outlinedialog.showModal();
 }

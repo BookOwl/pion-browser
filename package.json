@@ -1,5 +1,6 @@
 {
-  "name": "Pion",
-  "version": "1.0",
+  "name": "pion",
+  "productName": "Pion Browser",
+  "version": "1.2.1",
   "main": "main.js"
 }
