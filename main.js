@@ -15,6 +15,11 @@ app.on('window-all-closed', function() {
   const height = size[1];
   const obj = {width: width, height: height};
   const objStr = JSON.stringify(obj);
+  try {
+    fs.accessSync("save", fs.constants.F_OK); // Throws if "save" doesn't exist
+  } catch (e) {
+    fs.mkdirSync("save")
+  }
   fs.writeFileSync(__dirname + '/save/window_size.json', objStr);
   app.quit();
 });
